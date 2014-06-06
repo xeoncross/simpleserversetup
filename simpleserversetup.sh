@@ -105,7 +105,7 @@ if [[ -f $VPS_Base/$1/packages.txt ]]; then
 		# A standard install script for this package?
 		[[ -f $VPS_Base/packages/${params[0]}.sh ]] && continue;
 
-		print_warn "Checking ${params[0]} ${params[1]}"
+		echo "Checking ${params[0]} ${params[1]}"
 
 		# A required version number?
 		if [[ ${params[1]} ]]; then
@@ -119,6 +119,7 @@ if [[ -f $VPS_Base/$1/packages.txt ]]; then
 			if ! apt-get -s install ${params[0]} > /dev/null
 			then
 				exit_error "Aborting Install"
+				#echo "error"
 			fi
 		fi
 
