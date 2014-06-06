@@ -15,7 +15,7 @@ make-ssl-cert generate-default-snakeoil --force-overwrite
 # install nginx ${params[1]}
 apt-get -qq install nginx
 
-if [[ $? == 0 ]]; then
+#if [[ $? == 0 ]]; then
 
 	## Create our SSL certificate
 	#if [[ ! -d /etc/nginx/ssl ]]; then
@@ -39,16 +39,20 @@ if [[ $? == 0 ]]; then
 	#	echo $vvvsigncert
 	#fi
 
-fi
+#fi
 
 # This might be a bad idea if this script is run a second time...
 chown -R www-data:www-data /var/www 
 
 # Copy our default "multisite" configuration over
 if [[ ! -e /etc/nginx/sites-available/nginx-sites-conf ]]; then
-	cp $VPS_Base/config/nginx-sites-conf /etc/nginx/sites-available/nginx-sites-conf
 	
-	ln -sl /etc/nginx/sites-available/nginx-sites-conf /etc/nginx/sites-enabled/nginx-sites-conf
+	# Use our nginx-sites-conf "default"
+	cp $VPS_Base/config/nginx-sites-conf /etc/nginx/sites-available/nginx-sites-conf
+	ln -s /etc/nginx/sites-available/nginx-sites-conf /etc/nginx/sites-enabled/nginx-sites-conf
+
+	# Disable the included nginx "default"
+	rm /etc/nginx/sites-enabled/default > /dev/null &2>1
 
 	service nginx restart
 fi

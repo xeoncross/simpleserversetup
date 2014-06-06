@@ -13,14 +13,8 @@ server {
 	
 	# Catch-all name for multiple sites
 	server_name ~^(www\.)?(?<domain>.+)$;
-	root /var/www/$domain/public
+	root /var/www/$domain/public;
 	
-	# System Maintenance (Service Unavailable) 
-	if (-f $document_root/system_maintenance.html ) {
-		error_page 503 /system_maintenance.html;
-		return 503;
-	}
-
 	# https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
 	# Remember to test your server: https://www.ssllabs.com/ssltest/
 	ssl_ciphers					ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
@@ -58,6 +52,13 @@ server {
  
 	# Route all requests for non-existent files to index.php
 	location / {
+
+		# System Maintenance (Service Unavailable)
+		if (-f $document_root/system_maintenance.html ) {
+			error_page 503 /system_maintenance.html;
+			return 503;
+		}
+		
 		try_files $uri $uri/ /index.php$is_args$args;
 	}
  
