@@ -7,7 +7,7 @@ if [[ ! -d /etc/csf ]]; then
 	wget http://www.configserver.com/free/csf.tgz
 	tar -xzf csf.tgz
 	cd csf
-	sh install.sh
+	sh install.sh > /dev/null
 
 	perl /usr/local/csf/bin/csftest.pl
 
