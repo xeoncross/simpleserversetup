@@ -57,6 +57,9 @@ fi
 #	done
 #fi
 
+# Move to the temp directory for the rest of the session
+# Must use $VPS_Base to get the path now
+cd /tmp
 
 # Before we get started, lets define some helper functions
 function random_string() {
@@ -77,10 +80,13 @@ function get_domain_name() {
 }
 
 # Run apt-get install for the given package and set the result to $install_result
-function install {
-	install_result = `apt-get -qq --assume-yes install $1 > /dev/null`
-}
+#function install {
+#	install_result = `apt-get -qq --assume-yes install $1 > /dev/null`
+#}
 
+#function check_install {
+#	return apt-get -s install $1 > /dev/null
+#}
 
 print_warn "Updating Package List"
 

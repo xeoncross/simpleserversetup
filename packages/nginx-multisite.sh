@@ -13,7 +13,7 @@ make-ssl-cert generate-default-snakeoil --force-overwrite
 
 #todo add ${params[1]} support here!
 # install nginx ${params[1]}
-apt-get -qq install nginx
+#apt-get -qq install nginx
 
 #if [[ $? == 0 ]]; then
 

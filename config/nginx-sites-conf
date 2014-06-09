@@ -28,8 +28,8 @@ server {
 	ssl_certificate_key		/etc/ssl/private/ssl-cert-snakeoil.key;
 
 	# Site Specific
-    # ssl_certificate		/etc/nginx/ssl/$domain.crt;
-    # ssl_certificate_key	/etc/nginx/ssl/$domain.key; 
+	# ssl_certificate		/etc/nginx/ssl/$domain.crt;
+	# ssl_certificate_key	/etc/nginx/ssl/$domain.key; 
 
 	# Directives to send expires headers [Enable for production]
 	#location ~* [.](?:atom|jsonp?|ow[lx]|rdf|rss|xml)$ {
@@ -43,6 +43,12 @@ server {
 	location /favicon.ico {
 		expires			1w;
 		log_not_found	off;
+	}
+	
+	location = /robots.txt {
+		allow all;
+		log_not_found off;
+		access_log off;
 	}
 
 	# These files pose a threat. Deny by default.
