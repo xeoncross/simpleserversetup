@@ -16,3 +16,10 @@ http {
         }
     }
 }
+
+# To run this config:
+# cd /var/www/openresty/localhost
+# /usr/local/openresty/nginx/sbin/nginx -p `pwd`/ -c conf/nginx.conf
+#
+# If you want to stress-test it:
+# httperf --num-calls 100 --num-conns 10000 --max-connections 10000 --server localhost --port 8080

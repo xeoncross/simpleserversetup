@@ -50,5 +50,5 @@ fi
 
 if [ ! -d /var/www/openresty/localhost/ ]; then
 	mkdir -p /var/www/openresty/localhost/{conf,logs}
-	cp $VPS_BASE/config/openresty-localhost-config /var/www/openresty/localhost/conf/nginx.conf
+	cp $VPS_BASE/config/openresty-localhost-conf /var/www/openresty/localhost/conf/nginx.conf
 fi
