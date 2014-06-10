@@ -1,0 +1,17 @@
+chkrootkit
+csf
+git
+htop
+iotop
+libav-tools
+memcached
+ps_mem
+rsync
+wget
+yui-compressor
+vim
+luarocks
+openresty
+libev
+lua-cjson
+lua-sec
