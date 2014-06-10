@@ -7,8 +7,17 @@ Vagrant.configure("2") do |config|
 	# If you want something more current, try:
 	# http://brightbox.com/vagrant/images/
 	# https://cloud-images.ubuntu.com/vagrant/trusty/current/
-	config.vm.box = "precise64"
-	config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+	# Old and busted
+	#config.vm.box = "precise64"
+	#config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+	# New hotness (Lua package names, PHP 5.5, nginx 1.4, more chocolate-chip cookies and milk)
+	config.vm.box = "trusty64"
+	config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+
+	# The hostname the machine should have. If not given, Vagrant won't manage the hostname.
+	#config.vm.hostname "vagrant-trusty64"
 	
 	# If you want to set the VM's private address
 	#config.vm.network "private_network", :ip => "10.0.51.120"

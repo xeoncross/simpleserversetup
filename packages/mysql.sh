@@ -13,8 +13,8 @@ else
 	if [[ $? == 0 ]]; then
 
 		# Copy the MySQL config over
-		if [[ -f $VPS_Base/$1/config/mysql.cnf ]]; then
-			cp $VPS_Base/$1/config/mysql.cnf /etc/mysql/conf.d/mysql.cnf
+		if [[ -f $VPS_Base/$config_directory/config/mysql.cnf ]]; then
+			cp $VPS_Base/$config_directory/config/mysql.cnf /etc/mysql/conf.d/mysql.cnf
 		elif [[ -f $VPS_Base/config/mysql.cnf ]]; then
 			cp $VPS_Base/$config/mysql.cnf /etc/mysql/conf.d/mysql.cnf
 		fi

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ -z "${params[1]}" ]; then
+if [ -z "$params" ]; then
 	exit_error "Please enter the domain name for mysql_new_user [domain]"
 fi
 
-domain_name="${params[1]}"
+domain_name="$params"
 
 if [ ! -d "/var/www/$domain_name/" ]; then
 	mkdir "/var/www/$domain_name/"

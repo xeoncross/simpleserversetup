@@ -1,19 +1,19 @@
 #!/bin/bash
 
 function print_warn {
-	echo -n -e '\e[1;33m'; echo -n $1; echo -e '\e[0m'
+	echo -n -e '\e[1;33m'; echo -n "$1"; echo -e '\e[0m'
 }
 
 function print_success {
-	echo -n -e '\e[1;32m'; echo -n $1; echo -e '\e[0m'
+	echo -n -e '\e[1;32m'; echo -n "$1"; echo -e '\e[0m'
 }
 
 function print_error {
-	echo -n -e '\e[1;31m'; echo -n $1; echo -e '\e[0m'
+	echo -n -e '\e[1;31m'; echo -n "$1"; echo -e '\e[0m'
 }
 
 function exit_error {
-	print_error $1 && exit 1
+	print_error "$1" && exit 1
 }
 
 #clear && 
@@ -97,44 +97,52 @@ function get_domain_name() {
 print_warn "Updating Package List"
 
 # Update the package list first...
-apt-get -qq update --assume-yes
+#apt-get -qq update --assume-yes
 
 print_success "Package List Updated"
-print_warn "Checking Packages"
+
+#while read -r package params;
+#do
+#	echo "Package: \"$package\" ($params)"
+#done < $VPS_Base/$config_directory/packages.txt
+#
+#exit;
 
 # If we have a list of packages to install
 if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 	
+	print_warn "Checking Packages"
+
 	# Split each line into an array of parameters by tab
-	while IFS=$'\t' read -r -a params
+	while read -r package params;
 	do
-		#echo $VPS_Base/$config_directory/packages/${params[0]}.sh
-		#echo $VPS_Base/packages/${params[0]}.sh
+		#echo $VPS_Base/$config_directory/packages/$package.sh
+		#echo $VPS_Base/packages/$package.sh
 
 		# @todo We already installed this
-		#[[ -d "/etc/${params[0]}" ]] && continue;
+		#[[ -d "/etc/$package" ]] && continue;
 		#if [ ! -z "`which "$1" 2>/dev/null`" ]; then
 		#	continue;
 		#fi
 
 		# A custom install script for this package?
-		[[ -f $VPS_Base/$config_directory/packages/${params[0]}.sh ]] && continue;
+		[[ -f $VPS_Base/$config_directory/packages/$package.sh ]] && continue;
 
 		# A standard install script for this package?
-		[[ -f $VPS_Base/packages/${params[0]}.sh ]] && continue;
+		[[ -f $VPS_Base/packages/$package.sh ]] && continue;
 
-		echo "Checking ${params[0]} ${params[1]}"
+		echo "Checking $package $params"
 
 		# A required version number?
-		if [[ ${params[1]} ]]; then
-			if ! apt-get -s install "${params[0]}=${params[1]}" > /dev/null
+		if [[ $params ]]; then
+			if ! apt-get -s install "$package=$params" > /dev/null
 			then
 				exit_error "Aborting Install"
 			fi
 
 		# As long as it is avaiable
 		else 
-			if ! apt-get -s install ${params[0]} > /dev/null
+			if ! apt-get -s install $package > /dev/null
 			then
 				exit_error "Aborting Install"
 				#echo "error"
@@ -143,10 +151,12 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 
 	done < $VPS_Base/$config_directory/packages.txt
 	# ./basic_dialog.sh  filename.txt
+
+	print_success "Package Checks Complete"
+
 fi
 
 
-print_success "Package Checks Complete"
 print_warn "Starting Install"
 
 
@@ -159,51 +169,57 @@ fi
 if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 	
 	# Split each line into an array of parameters by tab
-	while IFS=$'\t' read -r -a params
+	while read -r package params;
 	do
-		#echo $VPS_Base/$config_directory/packages/${params[0]}.sh
-		#echo $VPS_Base/packages/${params[0]}.sh
+		echo "Installing $package"
+
+		if [[ $params ]]; then
+			echo "Params $params"
+		fi
+
+		#echo $VPS_Base/$config_directory/packages/$package.sh
+		#echo $VPS_Base/packages/$package.sh
 
 		# A custom install script for this package?
-		if [[ -f $VPS_Base/$config_directory/packages/${params[0]}.sh ]]; then
-			source $VPS_Base/$config_directory/packages/${params[0]}.sh
+		if [[ -f $VPS_Base/$config_directory/packages/$package.sh ]]; then
+			source $VPS_Base/$config_directory/packages/$package.sh
 
 		# A standard install script for this package?
-		elif [[ -f $VPS_Base/packages/${params[0]}.sh ]]; then
-			source $VPS_Base/packages/${params[0]}.sh
+		elif [[ -f $VPS_Base/packages/$package.sh ]]; then
+			source $VPS_Base/packages/$package.sh
 
 		# A required version number?
-		elif [[ ${params[1]} ]]; then
+		elif [[ $params ]]; then
 			
-			if [ -z "`which "$params{0}" 2>/dev/null`" ]; then
-				apt-get -qq --assume-yes install "${params[0]}=${params[1]}" #> /dev/null
+			if [ -z "`which "$package" 2>/dev/null`" ]; then
+				apt-get -qq --assume-yes install "$package=$params" #> /dev/null
 
 				if [[ $? != 0 ]]; then
-					exit_error "Something went wrong installing '${params[0]} ${params[1]}'."
+					exit_error "Something went wrong installing '$package $params'."
 				fi
 			else 
-				print_warn "${params[0]} is already installed"
+				print_warn "$package is already installed"
 			fi
 
 		# As long as it is avaiable
 		else 
 			
 
-			if [ -z "`which "$params{0}" 2>/dev/null`" ]; then
-				apt-get -qq --assume-yes install "${params[0]}" #> /dev/null
+			if [ -z "`which "$package" 2>/dev/null`" ]; then
+				apt-get -qq --assume-yes install "$package" #> /dev/null
 
 				if [[ $? != 0 ]]; then
-					exit_error "Something went wrong installing '${params[0]}'."
+					exit_error "Something went wrong installing '$package'."
 				fi
 			else 
-				print_warn "${params[0]} is already installed"
+				print_warn "$package is already installed"
 			fi
 
 
-			#apt-get -qq --assume-yes install ${params[0]} #> /dev/null
+			#apt-get -qq --assume-yes install $package #> /dev/null
 
 			#if [[ $? != 0 ]]; then
-			#	exit_error "Something went wrong installing '${params[0]}'."
+			#	exit_error "Something went wrong installing '$package'."
 			#fi
 		fi
 

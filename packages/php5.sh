@@ -9,7 +9,7 @@ if [[ $? == 0 ]]; then
 
 		if [[ -f $VPS_Base/$config_directory/config/php.ini ]]; then
 			cp $VPS_Base/$config_directory/config/php.ini /etc/php5/conf.d/custom_php.ini
-			print_scucess "$1/config/php.ini to /etc/php5/conf.d/custom_php.ini"
+			print_scucess "$config_directory/config/php.ini to /etc/php5/conf.d/custom_php.ini"
 		elif [[ -f $VPS_Base/config/php.ini ]]; then
 			cp $VPS_Base/config/php.ini /etc/php5/conf.d/custom_php.ini
 			print_success "config/php.ini to /etc/php5/conf.d/custom_php.ini"

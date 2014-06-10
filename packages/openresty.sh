@@ -1,14 +1,20 @@
 #!/bin/bash
 
+# Openresty doesn't act like apache or nginx - it installs itself like a lib to /usr/local/openresty
+# We could install openresty like nginx: http://brian.akins.org/blog/2013/03/19/building-openresty-on-ubuntu/
+# but what if we want to have an openresty+lua server and an nginx+go install running at the same time?
+# Solution, just leave openresty looking more like calling a lib since the nginx.conf is the "app" anyway
+# https://github.com/jiko/OpenResty-Vagrant/blob/master/install.sh
+
 # Openresty need these packages
 apt-get -qq install libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl make > /dev/null
 
-if [[ ! -d /etc/openresty ]]; then
+if [[ ! -d /usr/local/openresty ]]; then
 
 	OPENRESTY_VERSION="1.7.0.1"
 
-	if [[ ${params[1]} ]]; then
-		OPENRESTY_VERSION=${params[1]}
+	if [[ $params ]]; then
+		OPENRESTY_VERSION=$params
 	fi
 
 	print_warn "Installing openresty $OPENRESTY_VERSION"
@@ -28,16 +34,20 @@ if [[ ! -d /etc/openresty ]]; then
 			#PATH=/usr/local/openresty/nginx/sbin:$PATH
 			#export PATH
 
-			print_success "Openresty installed to /usr/local/openresty/nginx/sbin/nginx"
-			print_warn "http://openresty.org/#GettingStarted"
-			echo "cd /var/www/example.com"
-			echo "mkdir logs/ conf/"
-			echo "vim conf/nginx.conf"
-			echo "...type config and save..."
-			#echo "Create your sites in /var/www/example.com/{logs,conf}"
-			echo "then start openresty with this current path and config"
-			echo "/usr/local/openresty/nginx/sbin/nginx -p \`pwd\`/ -c conf/nginx.conf'"
+			if [[ ! -d /var/www/openresty/localhost ]]; then
+				mkdir /var/www/openresty/localhost/{conf,logs}
+				cp $VPS_BASE/config/openresty-localhost-config /var/www/openresty/localhost/conf/nginx.conf
+			fi
 
+			print_success "Openresty installed to /usr/local/openresty/"
+			echo "http://openresty.org/#GettingStarted"
+			print_warn "cd /var/www/openresty/localhost/"
+			echo "[then start openresty with this current path and config]"
+			print_warn "/usr/local/openresty/nginx/sbin/nginx -p \`pwd\`/ -c conf/nginx.conf'"
+
+			# apt-get install luarocks
+			# luarocks install lua-cjson
+			# /usr/local/openresty/nginx/sbin/nginx -p `pwd`/ -c conf/nginx.conf
 			# httperf --num-calls 100 --num-conns 10000 --max-connections 10000 --server localhost --port 8080
 		fi
 	fi
