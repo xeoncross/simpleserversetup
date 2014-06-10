@@ -6,7 +6,6 @@ gopath
 htop
 imagemagick
 iotop
-iptables
 libav-tools
 memcached
 mysql

@@ -25,19 +25,14 @@ if [[ ! -d /usr/local/openresty ]]; then
 
 	if cd "ngx_openresty-$OPENRESTY_VERSION"; then
 		./configure --with-luajit --prefix=/usr/local/openresty > /dev/null
-		make > /dev/null
+		make -s > /dev/null
 
-		if make install > /dev/null; then
+		if make -s install; then
 			
 			# We might want to run openresty with an APT version of nginx
 			# (Some webservices might need a different nginx compile)
 			#PATH=/usr/local/openresty/nginx/sbin:$PATH
 			#export PATH
-
-			if [[ ! -d /var/www/openresty/localhost ]]; then
-				mkdir /var/www/openresty/localhost/{conf,logs}
-				cp $VPS_BASE/config/openresty-localhost-config /var/www/openresty/localhost/conf/nginx.conf
-			fi
 
 			print_success "Openresty installed to /usr/local/openresty/"
 			echo "http://openresty.org/#GettingStarted"
@@ -53,4 +48,7 @@ if [[ ! -d /usr/local/openresty ]]; then
 	fi
 fi
 
-#wget -q https://raw.github.com/pixelb/ps_mem/master/ps_mem.py -O /usr/local/sbin/ps_mem && chmod +x /usr/local/sbin/ps_mem
+if [ ! -d /var/www/openresty/localhost/ ]; then
+	mkdir -p /var/www/openresty/localhost/{conf,logs}
+	cp $VPS_BASE/config/openresty-localhost-config /var/www/openresty/localhost/conf/nginx.conf
+fi

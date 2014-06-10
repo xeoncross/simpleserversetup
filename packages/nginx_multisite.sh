@@ -2,7 +2,8 @@
 
 # Is this even needed? Seems some systems don't create it
 if [[ ! -d /var/www ]]; then
-	mkdir /var/www
+	mkdir -p /var/www
+	chown www-data:www-data -R /var/www
 fi
 
 # Make sure the snake-oil certs exist (for SSL on nginx)

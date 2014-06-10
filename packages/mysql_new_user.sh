@@ -7,8 +7,8 @@ fi
 domain_name="$params"
 
 if [ ! -d "/var/www/$domain_name/" ]; then
-	mkdir "/var/www/$domain_name/"
-	mkdir "/var/www/$domain_name/public"
+	mkdir -p "/var/www/$domain_name/"
+	mkdir -p "/var/www/$domain_name/public"
 	#exit_error "no site found at /var/www/$domain_name/"
 fi
 

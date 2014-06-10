@@ -142,10 +142,18 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 
 		# As long as it is avaiable
 		else 
-			if ! apt-get -s install $package > /dev/null
-			then
-				exit_error "Aborting Install"
-				#echo "error"
+
+			# Look to see if it's already installed
+			# @todo apt-catch needs to be installed
+			#if ! apt-catch search $package > /dev/null; then
+			if ! dpkg -l $package > /dev/null; then
+
+				# Look to see if we can install it
+				if ! apt-get -s install $package > /dev/null
+				then
+					exit_error "Aborting Install"
+					#echo "error"
+				fi
 			fi
 		fi
 
@@ -174,7 +182,7 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 		echo "Installing $package"
 
 		if [[ $params ]]; then
-			echo "Params $params"
+			echo -e "\tParams: $params"
 		fi
 
 		#echo $VPS_Base/$config_directory/packages/$package.sh
@@ -188,32 +196,56 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 		elif [[ -f $VPS_Base/packages/$package.sh ]]; then
 			source $VPS_Base/packages/$package.sh
 
-		# A required version number?
-		elif [[ $params ]]; then
-			
-			if [ -z "`which "$package" 2>/dev/null`" ]; then
-				apt-get -qq --assume-yes install "$package=$params" #> /dev/null
+		else 
+
+			# @todo to keep the PHP extensions from re-installing
+			# if apt-cache search php | grep -q '^php5-curl'; then 
+			# if apt-catch search $package; then
+
+			# if [ -z "`which "$package" 2>/dev/null`" && ! apt-catch search $package > /dev/null]; then
+			if ! dpkg -l $package > /dev/null && [ -z "`which "$package" 2>/dev/null`" ]; then
+
+				#echo "2: installing $package"
+				if [[ $params ]]; then
+					apt-get -qq --assume-yes install "$package=$params" > /dev/null
+				else
+					apt-get -qq --assume-yes install "$package" > /dev/null
+				fi
 
 				if [[ $? != 0 ]]; then
 					exit_error "Something went wrong installing '$package $params'."
 				fi
+
 			else 
-				print_warn "$package is already installed"
+				print_warn "$package is already installed: `which "$package"`"
 			fi
 
-		# As long as it is avaiable
-		else 
-			
 
-			if [ -z "`which "$package" 2>/dev/null`" ]; then
-				apt-get -qq --assume-yes install "$package" #> /dev/null
-
-				if [[ $? != 0 ]]; then
-					exit_error "Something went wrong installing '$package'."
-				fi
-			else 
-				print_warn "$package is already installed"
-			fi
+#		# A required version number?
+#		elif [[ $params ]]; then
+#
+#			if [ -z "`which "$package" 2>/dev/null`" ]; then
+#				apt-get -qq --assume-yes install "$package=$params" #> /dev/null
+#
+#				if [[ $? != 0 ]]; then
+#					exit_error "Something went wrong installing '$package $params'."
+#				fi
+#			else 
+#				print_warn "$package is already installed"
+#			fi
+#
+#		# As long as it is avaiable
+#		else 
+#
+#			if [ -z "`which "$package" 2>/dev/null`" ]; then
+#				apt-get -qq --assume-yes install "$package" #> /dev/null
+#
+#				if [[ $? != 0 ]]; then
+#					exit_error "Something went wrong installing '$package'."
+#				fi
+#			else 
+#				print_warn "$package is already installed"
+#			fi
 
 
 			#apt-get -qq --assume-yes install $package #> /dev/null
