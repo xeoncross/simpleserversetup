@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
 	config.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
 
 	# The hostname the machine should have. If not given, Vagrant won't manage the hostname.
-	#config.vm.hostname "vagrant-trusty64"
+	# config.vm.hostname "vagrant-trusty64"
 	
 	# If you want to set the VM's private address
 	# config.vm.network "private_network", :ip => "10.10.10.10"

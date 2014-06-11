@@ -7,7 +7,7 @@ events {
 
 http {
     server {
-        listen 8080;
+        listen 80;
         location / {
             default_type text/html;
             content_by_lua '
