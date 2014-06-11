@@ -1,11 +1,11 @@
 build-essential
 chkrootkit
-csf
 curl
 dnsutils
 git
 gnupg
 htop
+httperf
 imagemagick
 iotop
 libav-tools

@@ -20,20 +20,30 @@ Vagrant.configure("2") do |config|
 	#config.vm.hostname "vagrant-trusty64"
 	
 	# If you want to set the VM's private address
-	#config.vm.network "private_network", :ip => "10.0.51.120"
+	# config.vm.network "private_network", :ip => "10.10.10.10"
 
 	# http, mysql, pgsql, mongo, and redis port forwarding (first 2 digits of port x2 = localhost port number)
-	config.vm.network :forwarded_port, guest: 80, host: 8080
+	config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
 	config.vm.network :forwarded_port, guest: 3306, host: 3333
 	config.vm.network :forwarded_port, guest: 5432, host: 5454
 	config.vm.network :forwarded_port, guest: 27017, host: 2727
 	config.vm.network :forwarded_port, guest: 6379, host: 6363
 
 	# share this current folder with the virtual box
-	config.vm.synced_folder "./", "/vagrant"
+	config.vm.synced_folder ".", "/vagrant"
+
+	# Also sync the www directory
+	# config.vm.synced_folder "www", "/var/www/", :nfs => true
 
 	# If true, then any SSH connections made will enable agent forwarding.
 	config.ssh.forward_agent = true
+
+	# Give this machine some power (default is 1 core and <500MB RAM)
+	config.vm.provider :virtualbox do |vb|
+		vb.customize ["modifyvm", :id, "--ioapic", "on"]
+		vb.customize ["modifyvm", :id, "--memory", 1024]
+		vb.customize ["modifyvm", :id, "--cpus", 2]
+	end
 
 	####################################
 	# Provisioning using shell scripting
@@ -46,5 +56,5 @@ Vagrant.configure("2") do |config|
 	# config.vm.provision :shell, :inline => "cp /my_hosts /etc/hosts"
 
 	# path to the shell script to install everything (or run once you `vagrant ssh` into the box)
-	# config.vm.provision :shell, :path => "sudo /vagrant/simpleserversetup sample-server"
+	# config.vm.provision :shell, :path => "simpleserversetup sample-server"
 end
