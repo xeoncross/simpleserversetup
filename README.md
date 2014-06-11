@@ -16,4 +16,4 @@ To test it out from your local machine...
 	vagrant ssh
 	cd /vagrant
 	sudo su
-	./simpleserversetup.sh default-server
+	./simpleserversetup. sample-server
