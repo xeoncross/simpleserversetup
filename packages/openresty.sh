@@ -34,11 +34,13 @@ if [[ ! -d /usr/local/openresty ]]; then
 			#PATH=/usr/local/openresty/nginx/sbin:$PATH
 			#export PATH
 
+			#openresty_path=/usr/local/openresty/nginx/sbin/nginx
+
+			# Make it easier to type
+			ln -s /usr/local/openresty/nginx/sbin/nginx /usr/sbin/openrestynginx
+
 			print_success "Openresty installed to /usr/local/openresty/"
 			echo "http://openresty.org/#GettingStarted"
-			print_warn "cd /var/www/openresty/localhost/"
-			echo "[then start openresty with this current path and config]"
-			print_warn "/usr/local/openresty/nginx/sbin/nginx -p \`pwd\`/ -c conf/nginx.conf'"
 
 			# apt-get install luarocks
 			# luarocks install lua-cjson
@@ -48,7 +50,11 @@ if [[ ! -d /usr/local/openresty ]]; then
 	fi
 fi
 
-if [ ! -d /var/www/openresty/localhost/ ]; then
-	mkdir -p /var/www/openresty/localhost/{conf,logs}
-	cp $VPS_BASE/config/openresty-localhost-conf /var/www/openresty/localhost/conf/nginx.conf
+if [ ! -d /var/www/openresty/localhost ]; then
+	echo "VPS_BASE: $VPS_BASE - `pwd`"
+	mkdir -m 775 -p /var/www/openresty/localhost/{conf,logs}
+	cp "$VPS_BASE/config/openresty-localhost-conf" /var/www/openresty/localhost/conf/nginx.conf
+	print_warn "cd /var/www/openresty/localhost/"
+	echo "[then start openresty with this current path and config]"
+	print_warn "openrestynginx -p \`pwd\`/ -c conf/nginx.conf'"
 fi

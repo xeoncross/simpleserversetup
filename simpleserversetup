@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# benchmark the time to setup the server
+_start_time=`date +%s`
+
 function print_warn {
 	echo -n -e '\e[1;33m'; echo -n "$1"; echo -e '\e[0m'
 }
@@ -16,9 +19,6 @@ function exit_error {
 	print_error "$1" && exit 1
 }
 
-#clear && 
-print_success "SimpleServerSetup v0.0.1"
-
 if [[ $(whoami) != "root" ]]; then
 	exit_error "Please run as root"
 fi
@@ -30,7 +30,6 @@ fi
 
 config_directory=${1%/} # trim the ending slash
 VPS_Base="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-VPS_Base="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 VPS_Bits=$([[ $(uname -m) == *"64" ]] && echo "64" || echo "32")
 VPS_CPU=$(grep "^physical id" /proc/cpuinfo | sort -u | wc -l)
 VPS_CPU_Cache=$(grep "^cache size" /proc/cpuinfo | sort -u | awk '{ print int($4 / 1024) }')
@@ -40,19 +39,26 @@ VPS_OS_Codename=$(lsb_release -sc | awk '{ print tolower($0) }')
 VPS_RAM=$(grep "^MemTotal:" /proc/meminfo | awk '{ print int($2 / 1024) }')
 VPS_HOSTNAME=$(uname -n)
 
-print_warn "$VPS_OS $VPS_OS_Codename - '$VPS_HOSTNAME'"
-print_warn "$VPS_CPU x $VPS_Bits bit CPU (with $VPS_CPU_Cores cores) and $VPS_RAM RAM"
-echo ""
 
 # Make sure this directory exists!
 if [[ ! -d $VPS_Base/servers/$config_directory ]]; then
 	exit_error "Invalid Path '$config_directory'"
 fi
 
-print_warn "You must use a SINGLE tab (\t) to separate values in your package.txt"
+#echo "Running from: $VPS_Base"
 
 # One last confirm from the user
 if [[ ! $2 ]]; then
+
+	#clear &&
+	print_success "SimpleServerSetup v0.0.1"
+
+	print_warn "$VPS_OS $VPS_OS_Codename - '$VPS_HOSTNAME'"
+	print_warn "$VPS_CPU x $VPS_Bits bit CPU (with $VPS_CPU_Cores cores) and $VPS_RAM RAM"
+	echo ""
+	
+	print_warn "You must use a SINGLE tab (\t) to separate values in your package.txt"
+
 	echo "Do you wish to install from 'servers/$config_directory?'"
 	select yn in "Yes" "No"; do
 		case $yn in
@@ -198,9 +204,12 @@ if [[ -e $VPS_Base/servers/$config_directory/packages.txt ]]; then
 		# The name of another (nested) server's install directory?
 		elif [[ -d $VPS_Base/servers/$package ]]; then
 			
-			$VPS_Base/simpleserversetup $package skipchecks
+			#if ! (cd $VPS_Base && $VPS_Base/simpleserversetup $package skipchecks); then
+			#if [[ $? != 0 ]]; then
+			#	exit_error "Failed to install $package"
+			#fi
 
-			if [[ $? != 0 ]]; then
+			if ! $VPS_Base/simpleserversetup $package skipchecks; then
 				exit_error "Failed to install $package"
 			fi
 
@@ -247,6 +256,11 @@ fi
 
 
 print_success "Setup Complete"
+
+# caculate time
+_end_time=`date +%s`
+_processing_time=$((_end_time-_start_time))
+[[ -z $2 ]] && echo "$_processing_time seconds"
 
 exit 0
 

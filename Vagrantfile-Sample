@@ -46,5 +46,5 @@ Vagrant.configure("2") do |config|
 	# config.vm.provision :shell, :inline => "cp /my_hosts /etc/hosts"
 
 	# path to the shell script to install everything (or run once you `vagrant ssh` into the box)
-	# config.vm.provision :shell, :path => "simpleserversetup.sh path/to/setup/folder"
+	# config.vm.provision :shell, :path => "sudo /vagrant/simpleserversetup sample-server"
 end
