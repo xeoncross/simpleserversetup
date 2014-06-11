@@ -45,8 +45,6 @@ if [[ ! -d $VPS_Base/servers/$config_directory ]]; then
 	exit_error "Invalid Path '$config_directory'"
 fi
 
-#echo "Running from: $VPS_Base"
-
 # One last confirm from the user
 if [[ ! $2 ]]; then
 
@@ -71,7 +69,6 @@ fi
 # Move to the temp directory for the rest of the session
 # (Must use $VPS_Base to get the path back to these files now)
 cd /tmp
-#echo $VPS_Base
 
 # Before we get started, lets define some helper functions
 function random_string() {
@@ -100,19 +97,12 @@ function get_domain_name() {
 #	return apt-get -s install $config_directory > /dev/null
 #}
 
-print_warn "Updating Package List"
-
 # Update the package list first...
-#apt-get -qq update --assume-yes
-
-print_success "Package List Updated"
-
-#while read -r package params;
-#do
-#	echo "Package: \"$package\" ($params)"
-#done < $VPS_Base/$config_directory/packages.txt
-#
-#exit;
+if [[ ! $2 ]]; then
+	print_warn "Updating Package List"
+	apt-get -qq update --assume-yes
+	print_success "Package List Updated"
+fi
 
 # If we have a list of packages to install
 if [[ -e $VPS_Base/servers/$config_directory/packages.txt ]]; then
@@ -203,11 +193,6 @@ if [[ -e $VPS_Base/servers/$config_directory/packages.txt ]]; then
 
 		# The name of another (nested) server's install directory?
 		elif [[ -d $VPS_Base/servers/$package ]]; then
-			
-			#if ! (cd $VPS_Base && $VPS_Base/simpleserversetup $package skipchecks); then
-			#if [[ $? != 0 ]]; then
-			#	exit_error "Failed to install $package"
-			#fi
 
 			if ! $VPS_Base/simpleserversetup $package skipchecks; then
 				exit_error "Failed to install $package"

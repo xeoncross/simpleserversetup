@@ -51,9 +51,8 @@ if [[ ! -d /usr/local/openresty ]]; then
 fi
 
 if [ ! -d /var/www/openresty/localhost ]; then
-	echo "VPS_BASE: $VPS_BASE - `pwd`"
 	mkdir -m 775 -p /var/www/openresty/localhost/{conf,logs}
-	cp "$VPS_BASE/config/openresty-localhost-conf" /var/www/openresty/localhost/conf/nginx.conf
+	cp "$VPS_Base/config/openresty-localhost-conf" /var/www/openresty/localhost/conf/nginx.conf
 	print_warn "cd /var/www/openresty/localhost/"
 	echo "[then start openresty with this current path and config]"
 	print_warn "openrestynginx -p \`pwd\`/ -c conf/nginx.conf'"
