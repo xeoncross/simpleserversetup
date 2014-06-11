@@ -23,7 +23,7 @@ if [[ $(whoami) != "root" ]]; then
 	exit_error "Please run as root"
 fi
 
-if [[ ! -f /etc/debian_version ]]; then
+if [[ ! -e /etc/debian_version ]]; then
 	exit_error "You must be running debian or ubuntu to use this"
 fi
 
@@ -45,7 +45,7 @@ print_warn "$VPS_CPU x $VPS_Bits bit CPU (with $VPS_CPU_Cores cores) and $VPS_RA
 echo ""
 
 # Make sure this directory exists!
-if [[ ! -d $VPS_Base/$config_directory ]]; then
+if [[ ! -d $VPS_Base/servers/$config_directory ]]; then
 	exit_error "Invalid Path '$config_directory'"
 fi
 
@@ -53,7 +53,7 @@ print_warn "You must use a SINGLE tab (\t) to separate values in your package.tx
 
 # One last confirm from the user
 if [[ ! $2 ]]; then
-	echo "Do you wish to install from '$config_directory?'"
+	echo "Do you wish to install from 'servers/$config_directory?'"
 	select yn in "Yes" "No"; do
 		case $yn in
 			Yes ) break;;
@@ -109,7 +109,7 @@ print_success "Package List Updated"
 #exit;
 
 # If we have a list of packages to install
-if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
+if [[ -e $VPS_Base/servers/$config_directory/packages.txt ]]; then
 	
 	print_warn "Checking Packages"
 
@@ -126,10 +126,13 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 		#fi
 
 		# A custom install script for this package?
-		[[ -f $VPS_Base/$config_directory/packages/$package.sh ]] && continue;
+		[[ -e $VPS_Base/servers/$config_directory/packages/$package.sh ]] && continue;
+
+		# The name of another (nested) server's install directory?
+		[[ -d $VPS_Base/servers/$package ]] && continue;
 
 		# A standard install script for this package?
-		[[ -f $VPS_Base/packages/$package.sh ]] && continue;
+		[[ -e $VPS_Base/packages/$package.sh ]] && continue;
 
 		echo "Checking $package $params"
 
@@ -157,7 +160,7 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 			fi
 		fi
 
-	done < $VPS_Base/$config_directory/packages.txt
+	done < $VPS_Base/servers/$config_directory/packages.txt
 	# ./basic_dialog.sh  filename.txt
 
 	print_success "Package Checks Complete"
@@ -169,12 +172,12 @@ print_warn "Starting Install"
 
 
 # Allow the system to be modified before we start
-if [[ -f $VPS_Base/$config_directory/pre_install.sh ]]; then
-	source $VPS_Base/$config_directory/pre_install.sh
+if [[ -e $VPS_Base/servers/$config_directory/pre_install.sh ]]; then
+	source $VPS_Base/servers/$config_directory/pre_install.sh
 fi
 
 # If we have a list of packages to install
-if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
+if [[ -e $VPS_Base/servers/$config_directory/packages.txt ]]; then
 	
 	# Split each line into an array of parameters by tab
 	while read -r package params;
@@ -185,15 +188,21 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 			echo -e "\tParams: $params"
 		fi
 
-		#echo $VPS_Base/$config_directory/packages/$package.sh
+		#echo $VPS_Base/servers/$config_directory/packages/$package.sh
 		#echo $VPS_Base/packages/$package.sh
 
 		# A custom install script for this package?
-		if [[ -f $VPS_Base/$config_directory/packages/$package.sh ]]; then
-			source $VPS_Base/$config_directory/packages/$package.sh
+		if [[ -e $VPS_Base/servers/$config_directory/packages/$package.sh ]]; then
+			source $VPS_Base/servers/$config_directory/packages/$package.sh
+
+		# The name of another (nested) server's install directory?
+		elif [[ -d $VPS_Base/servers/$package ]]; then
+			if ! $VPS_Base/simpleserversetup.sh $package; then
+				exit_error "Failed to install $package"
+			fi
 
 		# A standard install script for this package?
-		elif [[ -f $VPS_Base/packages/$package.sh ]]; then
+		elif [[ -e $VPS_Base/packages/$package.sh ]]; then
 			source $VPS_Base/packages/$package.sh
 
 		else 
@@ -220,50 +229,17 @@ if [[ -f $VPS_Base/$config_directory/packages.txt ]]; then
 				print_warn "$package is already installed: `which "$package"`"
 			fi
 
-
-#		# A required version number?
-#		elif [[ $params ]]; then
-#
-#			if [ -z "`which "$package" 2>/dev/null`" ]; then
-#				apt-get -qq --assume-yes install "$package=$params" #> /dev/null
-#
-#				if [[ $? != 0 ]]; then
-#					exit_error "Something went wrong installing '$package $params'."
-#				fi
-#			else 
-#				print_warn "$package is already installed"
-#			fi
-#
-#		# As long as it is avaiable
-#		else 
-#
-#			if [ -z "`which "$package" 2>/dev/null`" ]; then
-#				apt-get -qq --assume-yes install "$package" #> /dev/null
-#
-#				if [[ $? != 0 ]]; then
-#					exit_error "Something went wrong installing '$package'."
-#				fi
-#			else 
-#				print_warn "$package is already installed"
-#			fi
-
-
-			#apt-get -qq --assume-yes install $package #> /dev/null
-
-			#if [[ $? != 0 ]]; then
-			#	exit_error "Something went wrong installing '$package'."
-			#fi
 		fi
 
-	done < $VPS_Base/$config_directory/packages.txt
+	done < $VPS_Base/servers/$config_directory/packages.txt
 fi
 
 
 print_success "Package Installs Complete"
 
 # If there is an install script, run that too!
-if [[ -f $VPS_Base/$config_directory/post_install.sh ]]; then
-	source $VPS_Base/$config_directory/post_install.sh
+if [[ -e $VPS_Base/servers/$config_directory/post_install.sh ]]; then
+	source $VPS_Base/servers/$config_directory/post_install.sh
 fi
 
 

@@ -1,26 +1,7 @@
-chkrootkit
-csf
-git
-htop
-imagemagick
-iotop
-libav-tools
-memcached
-mysql
-mysql_new_user	example.com
-nginx
-nginx_multisite
 php5
 composer
 phpunit
-ps_mem
-rsync
 sqlite
-tesseract-ocr
-wget
-wkhtmltopdf
-yui-compressor
-vim
 php5-curl
 php5-gd
 php5-geoip
