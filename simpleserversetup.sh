@@ -197,7 +197,10 @@ if [[ -e $VPS_Base/servers/$config_directory/packages.txt ]]; then
 
 		# The name of another (nested) server's install directory?
 		elif [[ -d $VPS_Base/servers/$package ]]; then
-			if ! $VPS_Base/simpleserversetup.sh $package; then
+			
+			$VPS_Base/simpleserversetup.sh $package skipchecks
+
+			if [[ $? != 0 ]]; then
 				exit_error "Failed to install $package"
 			fi
 
