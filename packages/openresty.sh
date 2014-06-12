@@ -51,8 +51,10 @@ if [[ ! -d /usr/local/openresty ]]; then
 fi
 
 if [ ! -d /var/www/openresty/localhost ]; then
-	mkdir -m 775 -p /var/www/openresty/localhost/{conf,logs}
+	mkdir -m 775 -p /var/www/openresty/localhost/{conf,logs,html,lua}
 	cp "$VPS_Base/config/openresty-localhost-conf" /var/www/openresty/localhost/conf/nginx.conf
+	cp "$VPS_Base/config/openresty-websockets-html" /var/www/openresty/localhost/html/websockets.html
+	cp "$VPS_Base/config/openresty-websockets.lua" /var/www/openresty/localhost/lua/websockets.lua
 	print_warn "cd /var/www/openresty/localhost/"
 	echo "[then start openresty with this current path and config]"
 	print_warn "openrestynginx -p \`pwd\`/ -c conf/nginx.conf'"
