@@ -1,65 +1,34 @@
-worker_processes	1;
-user				www-data;
-error_log			logs/error.log;
-pid					logs/nginx.pid;
 
-events {
-	worker_connections 1024;
-}
+# set search paths for pure Lua external libraries (';;' is the default path):
+# lua_package_path '/foo/bar/?.lua;/blah/?.lua;;';
 
-http {
+# set search paths for Lua external libraries written in C (can also use ';;'):
+# lua_package_cpath '/bar/baz/?.so;/blah/blah/?.so;;';
 
-	include /usr/local/openresty/nginx/conf/mime.types;
+# Set to "off" for development for luajit to keep loading files on change
+lua_code_cache off;
 
-	default_type application/octet-stream;
+server {
+	listen 80;
+	index index.html;
+	root html;
 
-	log_format main '$remote_addr - $remote_user [$time_local] $status '
-		'"$request" $body_bytes_sent "$http_referer" '
-		'"$http_user_agent" "$http_x_forwarded_for"';
+	location = / {
+		default_type text/html;
+		content_by_lua '
+			local name = ngx.var.arg_name or "Anonymous"
+			ngx.say("Hello, ", name, "!")
+			ngx.say("<br>Try setting ?name=World")
+			-- ngx.say(" or the <a href=\"websockets.html\">websockets demo")
+		';
+	}
 
-	access_log	logs/access.log main;
-	sendfile	on;
+	# https://medium.com/technology-and-programming/websockets-with-openresty-1778601c9e05
+	location = /websockets {
+		lua_socket_log_errors off;
+		lua_check_client_abort on;
 
-	# set search paths for pure Lua external libraries (';;' is the default path):
-    # lua_package_path '/foo/bar/?.lua;/blah/?.lua;;';
- 
-    # set search paths for Lua external libraries written in C (can also use ';;'):
-    # lua_package_cpath '/bar/baz/?.so;/blah/blah/?.so;;';
-
-    # Set to "off" for development
-    lua_code_cache off;
-
-	server {
-		listen 80;
-		index index.html;
-		root html;
-
-		location = / {
-			default_type text/html;
-			content_by_lua '
-				local name = ngx.var.arg_name or "Anonymous"
-    			ngx.say("Hello, ", name, "!")
-    			ngx.say("<br>Try setting ?name=World")
-				-- ngx.say(" or the <a href=\"websockets.html\">websockets demo")
-			';
-		}
-
-		# https://medium.com/technology-and-programming/websockets-with-openresty-1778601c9e05
-		location = /websockets {
-			lua_socket_log_errors off;
-			lua_check_client_abort on;
-
-			# Path relative to the server prefix path (-p PATH) command-line option while starting Nginx
-			content_by_lua_file lua/websockets.lua;
-		}
+		# Path relative to the server prefix path (-p PATH) command-line option while starting Nginx
+		content_by_lua_file lua/websockets.lua;
 	}
 }
-
-# To run this config:
-# cd /var/www/openresty/localhost
-# sudo openrestynginx -p `pwd`/ -c conf/nginx.conf
-#
-# As you make changes you can reload with
-# openrestynginx -p `pwd`/ -s reload
-# If you want to stress-test it:
-# httperf --num-calls 100 --num-conns 10000 --max-connections 10000 --server localhost --port 8080

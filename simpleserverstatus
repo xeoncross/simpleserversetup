@@ -1,12 +1,29 @@
 #!/bin/bash
 
+if [[ ! $1 ]]; then
+	# Show a nice, clean, ready-to-install list of all packages on this machine
+	dpkg --get-selections | grep -v deinstall | egrep -o "^\S+"
+else
+	# show details about the packages you have installed
+	aptitude search '~i !~M'
+fi
+
+exit 0;
+
+
+# @todo: The "smart" package parsing below isn't working right on some ubuntu's
+
+
+
 if [[ $(whoami) != "root" ]]; then
 	echo -e "\e[1;31mPlease run as root\e[0m" && exit 1
 fi
 
 # Decompress the APT history if needed
 if [ -n "$( ls -A -tr /var/log/apt/history.log*.gz )" ]; then
-	zcat $( ls -tr /var/log/apt/history.log*.gz ) > /dev/null 2>&1
+	#zcat /var/log/history.log*.gz | grep " install"
+	#zcat $( ls -tr /var/log/apt/history.log*.gz >> /var/log/apt/history.log) > /dev/null 2>&1
+	(cd /var/log/apt && cat history.log > allhistory.log && zcat history.log*gz >> allhistory.log)
 fi
 
 # Output the APT log in reverse order with oldest commands first so we can "re-play" them

@@ -39,7 +39,18 @@ if [[ ! -d /usr/local/openresty ]]; then
 			# Make it easier to type
 			ln -s /usr/local/openresty/nginx/sbin/nginx /usr/sbin/openrestynginx
 
+			# Create a sites-enabled directory where we will ln -s our lua-app configs
+			mkdir -p /usr/local/openresty/nginx/sites-enabled/
+
+			# Backup the original
+			mv /usr/local/openresty/nginx/conf/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf.backup
+			rm /usr/local/openresty/nginx/conf/nginx.conf
+
+			# Copy our new config over
+			cp "$VPS_Base/config/openresty-nginx-conf" /usr/local/openresty/nginx/nginx.conf
+
 			print_success "Openresty installed to /usr/local/openresty/"
+			print_warn "Call with 'openrestynginx'"
 			echo "http://openresty.org/#GettingStarted"
 
 			# apt-get install luarocks
@@ -52,10 +63,13 @@ fi
 
 if [ ! -d /var/www/openresty/localhost ]; then
 	mkdir -m 775 -p /var/www/openresty/localhost/{conf,logs,html,lua}
-	cp "$VPS_Base/config/openresty-localhost-conf" /var/www/openresty/localhost/conf/nginx.conf
+	cp "$VPS_Base/config/openresty-localhost-conf" /var/www/openresty/localhost/conf/localhost.conf
+	ln -s /var/www/openresty/localhost/conf/localhost.conf /usr/local/openresty/nginx/sites-enabled/localhost.conf
+
 	cp "$VPS_Base/config/openresty-websockets-html" /var/www/openresty/localhost/html/websockets.html
 	cp "$VPS_Base/config/openresty-websockets.lua" /var/www/openresty/localhost/lua/websockets.lua
-	print_warn "cd /var/www/openresty/localhost/"
-	echo "[then start openresty with this current path and config]"
-	print_warn "openrestynginx -p \`pwd\`/ -c conf/nginx.conf'"
+
+	print_warn "Demo openresty application installed to /var/www/openresty/localhost/"
+	#echo "[then start openresty with this current path and config]"
+	#print_warn "openrestynginx -p \`pwd\`/ -c conf/nginx.conf'"
 fi
