@@ -128,7 +128,7 @@ http {
 	# set search paths for Lua external libraries written in C (can also use ';;'):
 	# lua_package_cpath '/bar/baz/?.so;/blah/blah/?.so;;';
 
-	include sites-enabled/*;
+	include ../sites-enabled/*;
 }
 
 # To run this config:

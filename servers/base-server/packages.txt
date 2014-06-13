@@ -14,6 +14,7 @@ mcrypt
 ps_mem
 rsync
 sqlite
+sockstat
 tesseract-ocr
 tmux
 traceroute

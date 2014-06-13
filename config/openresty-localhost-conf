@@ -11,7 +11,7 @@ lua_code_cache off;
 server {
 	listen 80;
 	index index.html;
-	root html;
+	root /var/www/openresty/localhost;
 
 	location = / {
 		default_type text/html;
@@ -23,12 +23,16 @@ server {
 		';
 	}
 
+	location / {
+		root /var/www/openresty/localhost/html;
+	}
+
 	# https://medium.com/technology-and-programming/websockets-with-openresty-1778601c9e05
 	location = /websockets {
 		lua_socket_log_errors off;
 		lua_check_client_abort on;
 
 		# Path relative to the server prefix path (-p PATH) command-line option while starting Nginx
-		content_by_lua_file lua/websockets.lua;
+		content_by_lua_file /var/www/openresty/localhost/lua/websockets.lua;
 	}
 }

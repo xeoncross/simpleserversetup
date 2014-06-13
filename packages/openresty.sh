@@ -47,7 +47,7 @@ if [[ ! -d /usr/local/openresty ]]; then
 			rm /usr/local/openresty/nginx/conf/nginx.conf
 
 			# Copy our new config over
-			cp "$VPS_Base/config/openresty-nginx-conf" /usr/local/openresty/nginx/nginx.conf
+			cp "$VPS_Base/config/openresty-nginx-conf" /usr/local/openresty/nginx/conf/nginx.conf
 
 			print_success "Openresty installed to /usr/local/openresty/"
 			print_warn "Call with 'openrestynginx'"
