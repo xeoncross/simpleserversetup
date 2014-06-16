@@ -65,9 +65,12 @@ server {
 			return 503;
 		}
 		
+		# Forget PHP, why not ask memcached first? (see below)
+		#try_files $uri $uri/ @memcached;
+
 		try_files $uri $uri/ /index.php$is_args$args;
 	}
- 
+
 	# Pass PHP scripts to php-fastcgi listening on port 9000
 	location ~ \.php$ {
  
@@ -93,11 +96,68 @@ server {
 		# If you have multiple PHP servers setup behind this proxy
 		# or you have PHP-FPM listening on TCP
 		# fastcgi_pass 127.0.0.1:9000;
+
+		# PHP search for file Exploit:
+		# The PHP regex location block fires instead of the try_files block. Therefore we need
+		# to add "try_files $uri =404;" to make sure that "/uploads/virusimage.jpg/hello.php"
+		# never executes the hidden php code inside virusimage.jpg because it can't find hello.php!
+		# The exploit also can be stopped by adding "cgi.fix_pathinfo = 0" in your php.ini file. 
 	}
+
+######################################
+# Memcache Caching layer (Crazy performance)
+#
+# You can actually serve results directly from memcache using nginx.
+# Wordpress sites can use the WP-FFPC plugin while regular apps can store
+# the final HTML inside memcache before sending it to the browser.
+# On subsequent requests, nginx will just pull the rendered HTML out of memcache.
+#
+############
+#
+#	# try to get result from memcached
+#	location @memcached {
+#			default_type text/html;
+#
+#			# Make sure you store the data in memcache with this same key!
+#			set $memcached_key data-$scheme://$host$request_uri;
+#			set $memcached_request 1;
+#
+#			# exceptions
+#			# avoid cache serve of POST requests
+#			if ($request_method = POST ) {
+#					set $memcached_request 0;
+#			}
+#
+#			# avoid cache serve of wp-admin-like pages, starting with "wp-"
+#			if ( $uri ~ "/wp-" ) {
+#					set $memcached_request 0;
+#			}
+#
+#			# avoid cache serve of any URL with query strings
+#			if ( $args ) {
+#				set $memcached_request 0;
+#			}
+#
+#			if ($http_cookie ~* "comment_author_|wordpressuser_|wp-postpass_|wordpress_logged_in_" ) {
+#				set $memcached_request 0;
+#			}
+#
+#			if ( $memcached_request = 1) {
+#					memcached_pass 127.0.0.1:11211;
+#					# If memcache doesn't have it...
+#					error_page 404 = @rewrites;
+#			}
+#
+#			if ( $memcached_request = 0) {
+#					rewrite ^ /index.php last;
+#			}
+#	}
+#
+#	# Called when we can't find the file inside memcache
+#	location @rewrites {
+#			add_header X-Cache-Engine "";
+#			rewrite ^ /index.php last;
+#	}
+
 }
  
-# PHP search for file Exploit:
-# The PHP regex location block fires instead of the try_files block. Therefore we need
-# to add "try_files $uri =404;" to make sure that "/uploads/virusimage.jpg/hello.php"
-# never executes the hidden php code inside virusimage.jpg because it can't find hello.php!
-# The exploit also can be stopped by adding "cgi.fix_pathinfo = 0" in your php.ini file. 
