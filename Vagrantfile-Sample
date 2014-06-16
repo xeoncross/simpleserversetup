@@ -20,7 +20,9 @@ Vagrant.configure("2") do |config|
 	# config.vm.hostname "vagrant-trusty64"
 	
 	# If you want to set the VM's private address
-	# config.vm.network "private_network", :ip => "10.10.10.10"
+	# https://docs.vagrantup.com/v2/networking/private_network.html
+	# config.vm.network "private_network", :type => "dhcp"
+	config.vm.network "private_network", :ip => "192.168.50.50"
 
 	# http, mysql, pgsql, mongo, and redis port forwarding (first 2 digits of port x2 = localhost port number)
 	config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
