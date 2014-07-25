@@ -16,18 +16,9 @@ NGINX_SRC="/opt/openresty"
 mkdir -p $NGINX_SRC
 cd $NGINX_SRC
 
-# Build dependencies for OpenResty.
-apt-get install build-essential git libpcre3 libpcre3-dev libssl-dev libgeoip-dev > /dev/null
- 
-# Install standard Nginx first so that you get the relevant service scripts installed too
-apt-get install nginx > /dev/null
-# `make install` will replace the actual binary though
- 
-# If you want to access Postgres via Nginx
-apt-get install libpq-dev > /dev/null
-
-# Not sure if these are needed...?
-apt-get install libreadline-dev libncurses5-dev perl make > /dev/null
+# Build dependencies for nginx and all modules below
+apt-get -qq install --assume-yes make build-essential git libpcre3 libpcre3-dev libssl-dev \
+	libgeoip-dev nginx libpq-dev libreadline-dev libncurses5-dev perl make
 
 # download nginx
 if [[ ! -d ngx_openresty-$version ]]; then
