@@ -42,6 +42,14 @@ VPS_HOSTNAME=$(uname -n)
 
 # Make sure this directory exists!
 if [[ ! -d $VPS_Base/servers/$config_directory ]]; then
+
+	# A one-off command? like `./simpleserversetup openresty`
+	if [[ -e $VPS_Base/packages/$config_directory.sh ]]; then
+		source $VPS_Base/packages/$config_directory.sh
+		print_success "$config_directory Install Complete"
+		exit 0
+	fi
+
 	exit_error "Invalid Path '$config_directory'"
 fi
 

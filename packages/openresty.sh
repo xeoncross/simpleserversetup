@@ -23,7 +23,7 @@ apt-get -qq install --assume-yes make build-essential git libpcre3 libpcre3-dev 
 # download nginx
 if [[ ! -d ngx_openresty-$version ]]; then
 
-	echo "downloading openresty $version"
+	print_warn "downloading openresty $version"
 	wget http://openresty.org/download/ngx_openresty-$version.tar.gz
 	tar -zxvf ngx_openresty-$version.tar.gz
 
@@ -32,7 +32,7 @@ fi
 
 if [[ ! -d drizzle7-2011.07.21 ]]; then
 
-	echo "downloading drizzle7"
+	print_warn "downloading drizzle7"
 	# http://openresty.org/#DrizzleNginxModule 
 	# The latest drizzle7 release does not support building libdrizzle 1.0 separately
 	# and requires a lot of external dependencies like Boost and Protobuf
@@ -55,7 +55,7 @@ if [[ ! -d ext ]]; then
 	mkdir ext
 	cd ext
 
-	echo "Cloning git projects"
+	print_warn "Cloning git projects"
 	git clone --depth 1 https://github.com/arut/nginx-rtmp-module.git
 	git clone --depth 1 https://github.com/nbs-system/naxsi.git
 	# We will use --add-module below to add these
@@ -64,7 +64,7 @@ if [[ ! -d ext ]]; then
 fi
 
 
-echo 'Setting up configuration for make'
+print_warn 'Setting up configuration for make'
 
 ./configure \
 --sbin-path=/usr/sbin/nginx \
@@ -104,10 +104,10 @@ echo 'Setting up configuration for make'
 --add-module=ext/naxsi/naxsi_src/ \
 --with-http_postgres_module > /dev/null
 
-echo 'make...'
+print_warn 'make...'
 make > /dev/null
 
-echo 'make install...'
+print_warn 'make install...'
 make install > /dev/null
 
 
