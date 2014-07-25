@@ -1,4 +1,5 @@
 # Default Nginx Config for Openresty-Nginx
+# Probably going to switch to https://github.com/h5bp/server-configs-nginx
 
 user www-data www-data;
 pid /run/nginx.pid;

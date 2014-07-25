@@ -111,6 +111,10 @@ print_warn 'make install...'
 make install > /dev/null
 
 
+# @todo 
+# mv /etc/nginx /etc/nginx-previous
+# git clone --depth 1 git clone git@github.com:h5bp/server-configs-nginx.git /etc/nginx
+
 # Only backup the original config once
 if [ ! -f /etc/nginx/nginx.default.conf ]; then
 	mv /etc/nginx/nginx.conf /etc/nginx/nginx.default.conf
