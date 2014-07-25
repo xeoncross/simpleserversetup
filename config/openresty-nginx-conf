@@ -8,8 +8,9 @@ pid /run/nginx.pid;
 # auto = all cpu cores
 worker_processes auto;
 
-# Maximum open file descriptors per process;
-# should be > worker_connections.
+# Maximum open file descriptors per process; should be > worker_connections.
+# Make sure to also set this at the OS level:
+# https://cs.uwaterloo.ca/~brecht/servers/openfiles.html
 worker_rlimit_nofile 8192;
 
 events {
@@ -18,7 +19,14 @@ events {
 	# you, as this is *a lot* of requests.
 	worker_connections 8000;
 
+	# Tells nginx to accept as many connections as possible after getting a
+	# notification about a new connection
 	# multi_accept on;
+
+	# http://wiki.nginx.org/Optimizations
+	# optmized to serve many clients with each thread
+	# only available in Linux kernels which are later than 2.6
+	# use epoll;
 }
 
 http {
@@ -61,9 +69,6 @@ http {
 
 	# Size of the client request body, specified in the “Content-Length” request header field.
 	client_max_body_size 50M;
-
-	# essential for linux, optmized to serve many clients with each thread
-	use epoll;
 
 	# Speed up file transfers by using sendfile() to copy directly
 	# between descriptors rather than using read()/write().
