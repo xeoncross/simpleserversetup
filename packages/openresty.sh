@@ -114,7 +114,7 @@ make install > /dev/null
 # Nginx HTTP server boilerplate configs
 if [ ! -d /etc/nginx-previous ]; then
 	mv /etc/nginx /etc/nginx-previous
-	git clone --depth 1 git clone git@github.com:h5bp/server-configs-nginx.git /etc/nginx
+	git clone --depth 1 https://github.com/h5bp/server-configs-nginx.git /etc/nginx
 fi
 
 ##############

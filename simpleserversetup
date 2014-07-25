@@ -40,40 +40,6 @@ VPS_RAM=$(grep "^MemTotal:" /proc/meminfo | awk '{ print int($2 / 1024) }')
 VPS_HOSTNAME=$(uname -n)
 
 
-# Make sure this directory exists!
-if [[ ! -d $VPS_Base/servers/$config_directory ]]; then
-
-	# A one-off command? like `./simpleserversetup openresty`
-	if [[ -e $VPS_Base/packages/$config_directory.sh ]]; then
-		source $VPS_Base/packages/$config_directory.sh
-		print_success "$config_directory Install Complete"
-		exit 0
-	fi
-
-	exit_error "Invalid Path '$config_directory'"
-fi
-
-# One last confirm from the user
-if [[ ! $2 ]]; then
-
-	#clear &&
-	print_success "SimpleServerSetup v0.0.1"
-
-	print_warn "$VPS_OS $VPS_OS_Codename - '$VPS_HOSTNAME'"
-	print_warn "$VPS_CPU x $VPS_Bits bit CPU (with $VPS_CPU_Cores cores) and $VPS_RAM RAM"
-	echo ""
-	
-	print_warn "You must use a SINGLE tab (\t) to separate values in your package.txt"
-
-	echo "Do you wish to install from 'servers/$config_directory?'"
-	select yn in "Yes" "No"; do
-		case $yn in
-			Yes ) break;;
-			No ) exit;;
-		esac
-	done
-fi
-
 # Move to the temp directory for the rest of the session
 # (Must use $VPS_Base to get the path back to these files now)
 cd /tmp
@@ -110,6 +76,40 @@ if [[ ! $2 ]]; then
 	print_warn "Updating Package List"
 	apt-get -qq update --assume-yes
 	print_success "Package List Updated"
+fi
+
+# Make sure this directory exists!
+if [[ ! -d $VPS_Base/servers/$config_directory ]]; then
+
+	# A one-off command? like `./simpleserversetup openresty`
+	if [[ -e $VPS_Base/packages/$config_directory.sh ]]; then
+		source $VPS_Base/packages/$config_directory.sh
+		print_success "$config_directory Install Complete"
+		exit 0
+	fi
+
+	exit_error "Invalid Path '$config_directory'"
+fi
+
+# One last confirm from the user
+if [[ ! $2 ]]; then
+
+	#clear &&
+	print_success "SimpleServerSetup v0.0.1"
+
+	print_warn "$VPS_OS $VPS_OS_Codename - '$VPS_HOSTNAME'"
+	print_warn "$VPS_CPU x $VPS_Bits bit CPU (with $VPS_CPU_Cores cores) and $VPS_RAM RAM"
+	echo ""
+	
+	print_warn "You must use a SINGLE tab (\t) to separate values in your package.txt"
+
+	echo "Do you wish to install from 'servers/$config_directory?'"
+	select yn in "Yes" "No"; do
+		case $yn in
+			Yes ) break;;
+			No ) exit;;
+		esac
+	done
 fi
 
 # If we have a list of packages to install
