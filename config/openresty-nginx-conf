@@ -33,6 +33,9 @@ http {
 	include /etc/nginx/mime.types;
 	default_type application/octet-stream;
 
+	# With full unicode support
+	charset UTF-8;
+
 	##
 	# Logging Settings
 	##
@@ -45,18 +48,37 @@ http {
 	# connections are tied up longer. (Default: 65)
 	keepalive_timeout 20;
 	
+	# send the client a "request timed out" if the body is not loaded by this time. Default 60.
+	client_body_timeout 10;
+
+	# If the client stops reading data, free up the stale client
+	# connection after this much time. Default 60.
+	send_timeout 4;
+
+	# allow the server to close the connection after a client stops responding.
+	# Frees up socket-associated memory.
+	reset_timedout_connection on;
+
+	# Size of the client request body, specified in the “Content-Length” request header field.
+	client_max_body_size 50M;
+
+	# essential for linux, optmized to serve many clients with each thread
+	use epoll;
+
 	# Speed up file transfers by using sendfile() to copy directly
 	# between descriptors rather than using read()/write().
 	# Disable this for Vagrant boxes - sometimes causes problems
 	sendfile on;
 	
-	# Tell Nginx not to send out partial frames; this increases throughput
-	# since TCP frames are filled up before being sent out. (adds TCP_CORK)
+	# Tcp_nopush causes nginx to attempt to send its HTTP response head in one packet, 
+	# instead of using partial frames. This is useful for prepending headers before calling sendfile, 
+	# or for throughput optimization.
 	tcp_nopush on;
 	
 	# Tell Nginx to enable the Nagle buffering algorithm for TCP packets, which
 	# collates several smaller packets together into one larger packet, thus saving
 	# bandwidth at the cost of a nearly imperceptible increase to latency. (removes TCP_NODELAY)
+	# Set this to off to lower latency on multiple small packets.
 	tcp_nodelay	off;
 
 	# Enable Gzip compressed.
