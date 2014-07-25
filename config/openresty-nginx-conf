@@ -47,6 +47,7 @@ http {
 	
 	# Speed up file transfers by using sendfile() to copy directly
 	# between descriptors rather than using read()/write().
+	# Disable this for Vagrant boxes - sometimes causes problems
 	sendfile on;
 	
 	# Tell Nginx not to send out partial frames; this increases throughput
