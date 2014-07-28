@@ -56,8 +56,8 @@ if [[ ! -d ext ]]; then
 	cd ext
 
 	print_warn "Cloning git projects"
-	git clone --depth 1 https://github.com/arut/nginx-rtmp-module.git
-	git clone --depth 1 https://github.com/nbs-system/naxsi.git
+	git clone https://github.com/arut/nginx-rtmp-module.git
+	git clone https://github.com/nbs-system/naxsi.git
 	# We will use --add-module below to add these
 
 	cd ..
@@ -114,8 +114,9 @@ make install > /dev/null
 # Nginx HTTP server boilerplate configs
 if [ ! -d /etc/nginx-previous ]; then
 	mv /etc/nginx /etc/nginx-previous
-	git clone --depth 1 https://github.com/h5bp/server-configs-nginx.git /etc/nginx
 fi
+
+git clone https://github.com/h5bp/server-configs-nginx.git /etc/nginx
 
 ##############
 # @depreciated
