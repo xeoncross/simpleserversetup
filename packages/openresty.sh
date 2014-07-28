@@ -20,6 +20,25 @@ cd $NGINX_SRC
 apt-get -qq install --assume-yes make build-essential git libpcre3 libpcre3-dev libssl-dev \
 	libgeoip-dev nginx libpq-dev libreadline-dev libncurses5-dev perl make
 
+##############################################
+# HTML5 Boilerplate Nginx Configs
+###
+# Like the default nginx configs... but logical
+
+# Backup the original nginx folder only once
+if [ ! -d /etc/nginx-previous ]; then
+	mv /etc/nginx /etc/nginx-previous
+fi
+
+# Checkout/update the project
+if [ ! -d /etc/nginx/.git ]; then
+	git clone https://github.com/h5bp/server-configs-nginx.git /etc/nginx
+else
+	"$(cd /etc/nginx && git pull origin master)"
+fi
+
+#####################
+
 # download nginx
 if [[ ! -d ngx_openresty-$version ]]; then
 
@@ -67,6 +86,7 @@ fi
 print_warn 'Setting up configuration for make'
 
 ./configure \
+--prefix=/etc \
 --sbin-path=/usr/sbin/nginx \
 --conf-path=/etc/nginx/nginx.conf \
 --error-log-path=/var/log/nginx/error.log \
@@ -105,18 +125,11 @@ print_warn 'Setting up configuration for make'
 --with-http_postgres_module > /dev/null
 
 print_warn 'make...'
-make > /dev/null
+make $VPS_MAKE_J > /dev/null
 
 print_warn 'make install...'
-make install > /dev/null
+make install $VPS_MAKE_J > /dev/null
 
-
-# Nginx HTTP server boilerplate configs
-if [ ! -d /etc/nginx-previous ]; then
-	mv /etc/nginx /etc/nginx-previous
-fi
-
-git clone https://github.com/h5bp/server-configs-nginx.git /etc/nginx
 
 ##############
 # @depreciated

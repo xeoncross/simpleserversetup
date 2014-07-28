@@ -39,6 +39,13 @@ VPS_OS_Codename=$(lsb_release -sc | awk '{ print tolower($0) }')
 VPS_RAM=$(grep "^MemTotal:" /proc/meminfo | awk '{ print int($2 / 1024) }')
 VPS_HOSTNAME=$(uname -n)
 
+# Speed up make if we have multiple cores...
+if (( $VPS_CPU_Cores > 1 )); then
+	VPS_MAKE_J=" -j2"
+	echo "Can use 2 cores for make..."
+else
+	VPS_MAKE_J="";
+fi
 
 # Move to the temp directory for the rest of the session
 # (Must use $VPS_Base to get the path back to these files now)
