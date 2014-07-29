@@ -82,6 +82,8 @@ if [[ ! -d ext ]]; then
 	cd ..
 fi
 
+# Copy the stat.xsl file for RTMP to the nginx folder so we have it
+cp ext/nginx-rtmp-module/stat.xsl /etc/nginx/stat.xsl
 
 print_warn 'Setting up configuration for make'
 

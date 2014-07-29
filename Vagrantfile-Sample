@@ -24,12 +24,14 @@ Vagrant.configure("2") do |config|
 	# config.vm.network "private_network", :type => "dhcp"
 	config.vm.network "private_network", :ip => "192.168.50.50"
 
-	# http, mysql, pgsql, mongo, and redis port forwarding (first 2 digits of port x2 = localhost port number)
+	# http, mysql, pgsql, mongo, redis, and rtmp port forwarding
+	# (first 2 digits of port x2 = localhost port number)
 	config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
 	config.vm.network :forwarded_port, guest: 3306, host: 3333, auto_correct: true
 	#config.vm.network :forwarded_port, guest: 5432, host: 5454, auto_correct: true
 	#config.vm.network :forwarded_port, guest: 27017, host: 2727, auto_correct: true
 	#config.vm.network :forwarded_port, guest: 6379, host: 6363, auto_correct: true
+	#config.vm.network :forwarded_port, guest: 1935, host: 1935, auto_correct: true
 
 	# share this current folder with the virtual box
 	config.vm.synced_folder ".", "/vagrant"
