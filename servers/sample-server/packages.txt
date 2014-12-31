@@ -1,8 +1,0 @@
-base-server
-go-server
-mysql-server
-mysql_new_user	example.org
-openresty-server
-php-server
-memcached
-chown_www

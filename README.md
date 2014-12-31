@@ -3,7 +3,10 @@ simpleserversetup
 
 An easy way to automatically setup/provision a debian/ubuntu VPS or Vagrant development box. Built in Bash.
 
-This is still in beta. While has been tested and works, it might not work perfectly yet.
+Includes pre-made install scripts for modern applications not included in the package management system. For example, installing GVM or compiling nginx with openresty and dribble.
+
+Inside the `servers/` directory there is a sample server (my-sample-server) you can use to create your own recipes. Simply create a new folder and add a `packages.txt` file.
+
 
 To test it out from your local machine...
 

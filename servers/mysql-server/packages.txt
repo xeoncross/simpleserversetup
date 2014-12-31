@@ -1,2 +1,0 @@
-mysql
-mysql_new_user	example.com

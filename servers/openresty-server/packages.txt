@@ -1,4 +1,0 @@
-luarocks
-openresty
-lua-cjson
-lua-sec

@@ -11,7 +11,6 @@ iotop
 libav-tools
 libssl-dev
 mcrypt
-ps_mem
 rsync
 sqlite
 sockstat
@@ -24,3 +23,17 @@ whois
 wkhtmltopdf
 yui-compressor
 zip
+chown_www
+composer
+csf
+dotdeb
+ffmpeg
+gopath
+gvm
+mysql-server
+mysql_new_user example.com
+nvm
+openresty
+php5
+phpunit
+ps_mem
